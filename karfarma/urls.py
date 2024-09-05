@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import Login, Refresh ,MyOffers , MyRequests , AllKarfarmas , CreatOffer
+from .views import *
 
 
 urlpatterns = [
@@ -8,5 +8,8 @@ urlpatterns = [
     path('myoffer/' , MyOffers.as_view()),
     path('myrequest/' , MyRequests.as_view()),
     path('allkarfarma/' , AllKarfarmas.as_view()),
-    path('creatoffer/' , CreatOffer.as_view()),
+    path('creatoffer/' , CreateOffer.as_view()),
+    path('searchJobOffers/' , SearchJobOffers.as_view()),
+
+
 ]

@@ -35,19 +35,31 @@ class MyRequests(ListAPIView):
         
         return Request.objects.filter(offer = my_offers[0])
         
-        
-    
 
 class AllKarfarmas(ListAPIView):
     queryset = Karfarma.objects.all()
     serializer_class = KarfarmaSerializer
 
 
-class CreatOffer(CreateAPIView):
-    queryset = Offer.objects.all()
+class CreateOffer(CreateAPIView):
     serializer_class = OfferSerializer
     permission_classes = [IsAuthenticated]
 
-    
+    def perform_create(self, serializer):
+        karfarma = Karfarma.objects.get(Karfarma, user=self.request.user)
+        serializer.save(karfarma=karfarma)
 
+class SearchJobOffers(ListAPIView):
+    serializer_class = OfferSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        query = self.request.query_params.get('q', None)
+        if query:
+            return Offer.objects.filter(
+                title__icontains=query, is_active=True
+            ) | Offer.objects.filter(
+                category__icontains=query, is_active=True
+            )
+        return Offer.objects.filter(is_active=True)
 
