@@ -4,12 +4,7 @@ from .views import *
 
 urlpatterns = [
     path('login/', Login.as_view()),
-    path('refresh/', Refresh.as_view()),
-    path('myoffer/' , MyOffers.as_view()),
-    path('myrequest/' , MyRequests.as_view()),
-    path('allkarfarma/' , AllKarfarmas.as_view()),
-    path('creatoffer/' , CreateOffer.as_view()),
-    path('searchJobOffers/' , SearchJobOffers.as_view()),
-
-
+    path('register/', Register.as_view()),
+    path('offer/' , OfferView.as_view()),
+    path('my_request/' , MyReq.as_view()),
 ]

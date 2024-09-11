@@ -1,47 +1,61 @@
-from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView ,ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
-from karfarma.models import Request
-from karfarma.serializer import RequestSeializer
-from . models import Karjoo , Resume
-from .serializer import ResumeSerializer , KarjooSerializer
+from .models import Karjoo , Resume ,Request ,User
+from .serializer import ResumeSerializer , UserSerializer ,RequestSeializer 
+from karfarma.models import Offer
+from karfarma.serializer import OfferKarjoo
+from .permisions import IsKarjoo
+from rest_framework.exceptions import ValidationError , PermissionDenied
+from karfarma.views import Login
 
 
-class MyResume(ListAPIView):
-    queryset = Karjoo.objects.all()
-    serializer_class = KarjooSerializer
-    permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        return Karjoo.objects.filter(user = self.request.user)
+
+
+class Register(CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def perform_create(self, serializer):
+        return Karjoo.objects.create(user = serializer.save())
     
-class UpdatemyResume(UpdateAPIView):
+
+class ResumeView(ListCreateAPIView):
     queryset = Resume.objects.all()
     serializer_class = ResumeSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated , IsKarjoo]
+
+    def perform_create(self, serializer):
+        my_karjoo = Karjoo.objects.get(user = self.request.user)
+        try:
+            return serializer.save(karjoo = my_karjoo)
+        except:
+            raise ValidationError("a resume is already exists")
     
     def get_queryset(self):
-        return Resume.objects.filter(karjoo__user=self.request.user)
+        my_karjoo = Karjoo.objects.get(user = self.request.user)
+        return Resume.objects.filter(karjoo = my_karjoo)
+    
 
-
-class CreatResume(CreateAPIView):
-    queryset = Resume.objects.all()
-    serializer_class = ResumeSerializer
-    permission_classes = [IsAuthenticated]
-
-class RetriveResume(RetrieveAPIView):
-    queryset = Resume.objects.all()
-    serializer_class = ResumeSerializer
-    permission_classes = [IsAuthenticated]
-
-class NewRequest(CreateAPIView):
+class RequestView(ListCreateAPIView):
     queryset = Request.objects.all()
     serializer_class = RequestSeializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated , IsKarjoo]
 
-class Myrequest(ListAPIView):
-    queryset = Request.objects.all()
-    serializer_class = RequestSeializer
-    permission_classes = [IsAuthenticated]
+    def perform_create(self, serializer):
+        my_karjoo = Karjoo.objects.get(user = self.request.user)
+        return serializer.save(karjoo = my_karjoo) 
+    
     def get_queryset(self):
-        return Request.objects.filter(user = self.request.user)
+        my_karjoo = Karjoo.objects.get(user = self.request.user)
+        return Request.objects.filter(karjoo = my_karjoo)
+    
+
+class AllOffer(ListAPIView):
+    queryset = Offer.objects.all()
+    serializer_class = OfferKarjoo
+    
+    
+
+
     

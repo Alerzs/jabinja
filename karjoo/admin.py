@@ -1,12 +1,5 @@
 from django.contrib.admin import register, ModelAdmin
-from .models import Karjoo ,Resume
-
-@register(Karjoo)
-class KarjooAdmin(ModelAdmin):
-    list_display = [
-        'user',
-        'resume'
-    ]
+from .models import Karjoo ,Resume ,Request
 
 @register(Resume)
 class ResumeAdmin(ModelAdmin):
@@ -21,3 +14,16 @@ class ResumeAdmin(ModelAdmin):
 
 
 
+@register(Request)
+class RequestAdmin(ModelAdmin):
+    list_display = [
+        'date',
+        'karjoo',
+        'offer'
+    ]
+
+@register(Karjoo)
+class KarjooAdmin(ModelAdmin):
+    list_display = [
+        'user'
+    ]

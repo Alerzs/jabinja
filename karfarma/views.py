@@ -2,64 +2,46 @@ from rest_framework.generics import ListAPIView, CreateAPIView
 from django.http.response import HttpResponse, JsonResponse
 from rest_framework_simplejwt.views import TokenObtainPairView ,TokenRefreshView
 from rest_framework.permissions import IsAuthenticated
-from .models import  Offer , Karfarma , Request
-from .serializer import OfferSerializer , KarfarmaSerializer , RequestSeializer
+from karjoo.models import Request
+from karjoo.serializer import RequestSeializer
+from .models import  Offer , Karfarma ,User
+from .serializer import OfferSerializer , UserSerializer
+from rest_framework.generics import ListCreateAPIView
+from .permisions import IsKarfarma
 import json
 
 
 class Login(TokenObtainPairView):
     pass
 
-class Refresh(TokenRefreshView):
-    pass
+class Register(CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
+    def perform_create(self, serializer):
+        return Karfarma.objects.create(user = serializer.save())
 
-class MyOffers(ListAPIView):
+class OfferView(ListCreateAPIView):
     queryset = Offer.objects.all()
     serializer_class = OfferSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated , IsKarfarma]
 
     def get_queryset(self):
         my_karfarma = Karfarma.objects.get(user = self.request.user)
         return Offer.objects.filter(karfarma = my_karfarma)
     
+    def perform_create(self, serializer):
+        my_karfarma = Karfarma.objects.get(user = self.request.user)
+        ser = serializer.save(karfarma = my_karfarma , is_active = True)
+        return ser
 
-class MyRequests(ListAPIView):
+
+class MyReq(ListAPIView):
     queryset = Request.objects.all()
     serializer_class = RequestSeializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsKarfarma , IsAuthenticated]
 
     def get_queryset(self):
-        my_karfarma = Karfarma.objects.get(user = self.request.user)
-        my_offers = Offer.objects.filter(karfarma = my_karfarma)
+        return Request.objects.filter(offer__karfarma__user = self.request.user)
         
-        return Request.objects.filter(offer = my_offers[0])
-        
-
-class AllKarfarmas(ListAPIView):
-    queryset = Karfarma.objects.all()
-    serializer_class = KarfarmaSerializer
-
-
-class CreateOffer(CreateAPIView):
-    serializer_class = OfferSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        karfarma = Karfarma.objects.get(Karfarma, user=self.request.user)
-        serializer.save(karfarma=karfarma)
-
-class SearchJobOffers(ListAPIView):
-    serializer_class = OfferSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        query = self.request.query_params.get('q', None)
-        if query:
-            return Offer.objects.filter(
-                title__icontains=query, is_active=True
-            ) | Offer.objects.filter(
-                category__icontains=query, is_active=True
-            )
-        return Offer.objects.filter(is_active=True)
-
+         

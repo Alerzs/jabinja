@@ -1,22 +1,22 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Karfarma , Offer , Request
+from .models import Karfarma , Offer ,User
 
-
-class KarfarmaSerializer(ModelSerializer):
-    class Meta:
-        model = Karfarma
-        fields = ['name' , 'address' , 'company_description']
 
 
 class OfferSerializer(ModelSerializer):
     class Meta:
         model = Offer
-        fields = '__all__'
+        exclude = ["karfarma" ]
         
 
-class RequestSeializer(ModelSerializer):
+class UserSerializer(ModelSerializer):
     class Meta:
-        model = Request
+        model = User
+        fields = ["username","password"]
+
+
+class OfferKarjoo(ModelSerializer):
+    class Meta:
+        model = Offer
         fields = '__all__'
-
-
+        

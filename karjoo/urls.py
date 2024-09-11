@@ -1,13 +1,10 @@
 from django.urls import path
-from .views import MyResume , NewRequest ,CreatResume, RetriveResume , UpdatemyResume, Myrequest
-
+from .views import Login , Register , RequestView , ResumeView , AllOffer
 
 urlpatterns = [
-    path('myresume/', MyResume.as_view()),
-    path('newrequest/', NewRequest.as_view()),
-    path('creatresume/' , CreatResume.as_view()),
-    path('retriveresume/<int:pk>/', RetriveResume.as_view()),
-    path('updatemyresume/<int:pk>/', UpdatemyResume.as_view()),
-    path('myrequest/' , Myrequest.as_view()),
-
+    path('login/' , Login.as_view()),
+    path('register/' , Register.as_view()),
+    path('job_request/' , RequestView.as_view()),
+    path('resume/' , ResumeView.as_view()),
+    path('all_offer/' , AllOffer.as_view())
 ]
