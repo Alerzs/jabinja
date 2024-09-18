@@ -25,6 +25,9 @@ class OfferView(ListCreateAPIView):
     queryset = Offer.objects.all()
     serializer_class = OfferSerializer
     permission_classes = [IsAuthenticated , IsKarfarma]
+    ordering_fields = ['price']
+    search_fields = ['category']
+    filterset_fields = ['category', 'title']
 
     def get_queryset(self):
         my_karfarma = Karfarma.objects.get(user = self.request.user)

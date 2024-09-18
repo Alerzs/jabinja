@@ -8,7 +8,7 @@ class OfferSerializer(ModelSerializer):
         model = Offer
         exclude = ["karfarma" ]
         
-
+        
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User

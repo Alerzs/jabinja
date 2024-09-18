@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'karfarma',
     'rest_framework_simplejwt',
     'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -123,4 +124,15 @@ REST_FRAMEWORK = {
 SIMPLE_JWT={
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=10),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
 }
